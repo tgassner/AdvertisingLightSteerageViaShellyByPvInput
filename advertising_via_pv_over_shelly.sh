@@ -1,0 +1,1 @@
+/mnt/ext/opt/apache/bin/php /share/CACHEDEV1_DATA/homes/admin/advertising_via_pv_over_shelly.php >> /tmp/advertising_via_pv_over_shelly.log
