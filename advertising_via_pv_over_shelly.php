@@ -10,6 +10,9 @@ const urlApiFormat = "https://monitoringapi.solaredge.com/site/%s/currentPowerFl
 const urlShellyOn = "http://172.31.31.50/relay/0?turn=on";
 const urlShellyOff = "http://172.31.31.50/relay/0?turn=off";
 
+// we don't want to configute in php.ini
+date_default_timezone_set("Europe/Vienna");
+
 // we dont't want to see Errors - only in Log
 ini_set('display_errors', 0);
 
