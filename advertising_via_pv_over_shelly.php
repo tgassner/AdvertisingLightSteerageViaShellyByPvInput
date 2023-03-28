@@ -7,8 +7,8 @@ const numberOfRetries = 10;
 const apiKeyFile = "api-key.txt";
 const siteId = "site-id.txt";
 const urlApiFormat = "https://monitoringapi.solaredge.com/site/%s/currentPowerFlow?api_key=%s";
-const urlShellyOn = "http://172.31.31.xxx/relay/0?turn=on";
-const urlShellyOff = "http://172.31.31.xxx/relay/0?turn=off";
+const urlShellyOn = "http://172.31.31.50/relay/0?turn=on";
+const urlShellyOff = "http://172.31.31.50/relay/0?turn=off";
 
 // we dont't want to see Errors - only in Log
 ini_set('display_errors', 0);
@@ -43,15 +43,15 @@ function main() {
 
     if ($success) {
         if ($currentPower > threshold) {
+            echo(getCurrentDateTimeFormated() . "Do switch OFF - " . $currentPower . "KWh \n");
             switchingAdvertismentOff();
-            echo(getCurrentDateTimeFormated() . "switch OFF - " . $currentPower . "KWh \n");
         } else {
+            echo(getCurrentDateTimeFormated() . "Do switch ON - " . $currentPower . "KWh\n");
             switchingAdvertismentOn();
-            echo(getCurrentDateTimeFormated() . "switch ON - " . $currentPower . "KWh\n");
         }
     } else {
+        echo(getCurrentDateTimeFormated() . "Do switch ON => fail-safe defense programming!!\n");
         switchingAdvertismentOn();
-        echo(getCurrentDateTimeFormated() . "switch ON => fail-safe defense programming!!\n");
     }
 }
 
@@ -73,13 +73,19 @@ function switchingAdvertisment($on) {
     if ($content === FALSE) {
         echo(getCurrentDateTimeFormated() . "Error occured on switching Shelly! " . error_get_last()['message'] . "\n");
     } else {
-        echo(getCurrentDateTimeFormated() . "Shelly switched successfully!\n");
+        $jsonObject = json_decode($content);
+        $onOff = "UNDEFINED";
+        foreach($jsonObject as $key1 => $value1) {
+            if ($key1 == "ison") {
+                $onOff = $value1 ? "ON" : "OFF";
+            }
+        }
+        echo(getCurrentDateTimeFormated() . "Shelly switched/left successfully "  . $onOff . "\n");
     }
 }
 
 function getHttpFileContent($url) {
-    $content = file_get_contents($url);
-    return $content;
+    return file_get_contents($url);
 }
 
 function extractPowerValue($content) {
