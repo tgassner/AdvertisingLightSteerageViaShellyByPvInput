@@ -24,6 +24,14 @@ function main() {
     $exitWithError = false;
     $currentPower = -1.0;
 
+    // check time to avoid call Webservice in the night where it is not needed and avoid light in the night
+    $currentHour = intval(date('H'));
+    if ($currentHour > 20 || $currentHour < 5) {
+        echo(getCurrentDateTimeFormated() . "it's in the night -> shut up and sleep\n");
+        switchingAdvertismentOff();
+        exit;
+    }
+
     do {
         $content = getHttpFileContent(determineUrl());
 
